@@ -13,3 +13,18 @@ func InsertionSort(arr []int, compare func(a, b int) int) []int {
 	}
 	return arr
 }
+
+func SortAppend(arr []int, elt int, compare func(a, b int) int) []int {
+	length := len(arr) + 1
+	narr := make([]int, length)
+	done := false
+	for j, i := 0, 0; j < length-1; j, i = j+1, i+1 {
+		if compare(elt, arr[i]) <= 0 && !done {
+			narr[j] = elt
+			j++
+			done = true
+		}
+		narr[j] = arr[i]
+	}
+	return narr
+}

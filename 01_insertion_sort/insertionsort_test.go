@@ -59,3 +59,39 @@ func TestInsertionSort(t *testing.T) {
 		}
 	}
 }
+
+func TestSortAppend(t *testing.T) {
+	asccmp := func(a, b int) int {
+		if a > b {
+			return 1
+		} else if a == b {
+			return 0
+		}
+		return -1
+	}
+	cases := []struct {
+		init_arr []int
+		init_elt int
+		exp      []int
+		cmp      func(a, b int) int
+	}{
+		{
+			init_arr: []int{1, 3},
+			init_elt: 2,
+			exp:      []int{1, 2, 3},
+			cmp:      asccmp,
+		},
+		{
+			init_arr: []int{1, 3, 5, 5, 10, 11, 15},
+			init_elt: 16,
+			exp:      []int{1, 3, 5, 5, 10, 11, 15, 16},
+			cmp:      asccmp,
+		},
+	}
+	for _, c := range cases {
+		got := SortAppend(c.init_arr, c.init_elt, c.cmp)
+		if !reflect.DeepEqual(got, c.exp) {
+			t.Errorf("init_arr: %v, init_elt: %v, got array %v, expecting %v", c.init_elt, c.init_elt, got, c.exp)
+		}
+	}
+}
