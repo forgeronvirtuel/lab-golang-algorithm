@@ -87,6 +87,12 @@ func TestSortAppend(t *testing.T) {
 			exp:      []int{1, 3, 5, 5, 10, 11, 15, 16},
 			cmp:      asccmp,
 		},
+		{
+			init_arr: []int{1, 3, 5, 5, 10, 11, 15},
+			init_elt: -1,
+			exp:      []int{-1, 1, 3, 5, 5, 10, 11, 15},
+			cmp:      asccmp,
+		},
 	}
 	for _, c := range cases {
 		got := SortAppend(c.init_arr, c.init_elt, c.cmp)
