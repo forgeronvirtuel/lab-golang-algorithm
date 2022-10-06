@@ -16,7 +16,7 @@ type bytesLinkedListItem struct {
 	ll  *bytesLinkedListItem
 }
 
-func (ll *bytesLinkedListItem) add(msg []byte) *bytesLinkedListItem {
+func (ll *bytesLinkedListItem) lifoAdd(msg []byte) *bytesLinkedListItem {
 	if ll == nil {
 		return &bytesLinkedListItem{
 			msg: msg,
@@ -27,25 +27,60 @@ func (ll *bytesLinkedListItem) add(msg []byte) *bytesLinkedListItem {
 	return &bytesLinkedListItem{msg: msg, ll: ll}
 }
 
-func (ll *bytesLinkedListItem) length() int {
-	if ll == nil {
-		return 0
-	}
-	var i int
-	for i = 1; ll.ll != nil; i++ {
-		ll = ll.ll
-	}
-	return i
-}
-
-type BytesLinkedList struct {
+type Queue struct {
+	first  *bytesLinkedListItem
 	last   *bytesLinkedListItem
 	length int
 }
 
-func (ll *BytesLinkedList) Add(msg []byte) *BytesLinkedList {
+func (q *Queue) Produce(msg []byte) *Queue {
+	if q == nil {
+		blk := &bytesLinkedListItem{
+			msg: msg,
+			ll:  nil,
+		}
+		return &Queue{
+			first:  blk,
+			last:   blk,
+			length: 1,
+		}
+	}
+
+	blk := &bytesLinkedListItem{
+		msg: msg,
+		ll:  nil,
+	}
+	q.last.ll = blk
+	q.last = blk
+	q.length++
+	return q
+}
+
+func (q *Queue) Consume() ([]byte, *Queue) {
+	if q == nil || q.first == nil {
+		return nil, nil
+	}
+	blk := q.first
+	q.first = blk.ll
+	q.length--
+	return blk.msg, q
+}
+
+func (q *Queue) Length() int {
+	if q == nil {
+		return 0
+	}
+	return q.length
+}
+
+type LIFOBytesLinkedList struct {
+	last   *bytesLinkedListItem
+	length int
+}
+
+func (ll *LIFOBytesLinkedList) Add(msg []byte) *LIFOBytesLinkedList {
 	if ll == nil {
-		return &BytesLinkedList{
+		return &LIFOBytesLinkedList{
 			last: &bytesLinkedListItem{
 				msg: msg,
 				ll:  nil,
@@ -54,19 +89,19 @@ func (ll *BytesLinkedList) Add(msg []byte) *BytesLinkedList {
 		}
 	}
 
-	ll.last = ll.last.add(msg)
+	ll.last = ll.last.lifoAdd(msg)
 	ll.length += 1
 	return ll
 }
 
-func (ll *BytesLinkedList) Get() []byte {
+func (ll *LIFOBytesLinkedList) Get() []byte {
 	msg := ll.last.msg
 	ll.last = ll.last.ll
 	ll.length -= 1
 	return msg
 }
 
-func (ll *BytesLinkedList) Length() int {
+func (ll *LIFOBytesLinkedList) Length() int {
 	if ll == nil {
 		return 0
 	}
